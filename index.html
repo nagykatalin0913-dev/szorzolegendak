@@ -1,190 +1,195 @@
 <!DOCTYPE html>
 <html lang="hu">
 <head>
-  <meta charset="utf-8">
-  <title>Pass the Pin � Final Clean</title>
-
-  <link rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-
-  <style>
-    html, body, #map {
-      height: 100%;
-      margin: 0;
-    }
-
-    /* T�RK�P HANGOL�S */
-    /*
-	.leaflet-tile {
-      //filter: brightness(0.98) saturate(1.1);
-	  filter: sepia(0.35) saturate(1.2) brightness(0.97);
-    }
-	*/
-	.leaflet-tile {
-	  filter:
-		sepia(0.4)
-		saturate(0.95)
-		hue-rotate(-18deg)
-		brightness(1.02)
-		contrast(1.18);
-	}
-
-	
-    /* ===== MARKER ===== */
-    .pin-wrap {
-      position: relative;
-      width: 48px;
-      height: 48px;
-    }
-
-    .pin-svg {
-      width: 26px;          /* picit nagyobb */
-      height: 36px;
-      position: absolute;
-      left: 50%;
-      bottom: 0;
-      transform: translateX(-50%);
-    }
-
-    /* ===== BUBOR�K ===== */
-    .leaflet-tooltip.passpin {
-      background: none;
-      border: none;
-      box-shadow: none;
-      padding: 0;
-    }
-
-    .bubble {
-      background: #f7efe6;
-      border: 2px solid #d6b36a;
-      border-radius: 18px;
-      padding: 10px 14px;
-      color: #2b1e1e;
-      font-size: 14px;
-      box-shadow: 0 12px 24px rgba(0,0,0,0.25);
-      animation: float 3.5s ease-in-out infinite;
-    }
-
-    .bubble::after {
-      content: "";
-      position: absolute;
-      bottom: -10px;
-      left: 50%;
-      transform: translateX(-50%);
-      border-left: 8px solid transparent;
-      border-right: 8px solid transparent;
-      border-top: 10px solid #f7efe6;
-    }
-
-    .city {
-      font-family: Georgia, serif;
-      font-size: 12px;
-      font-weight: bold;
-      text-align: center;
-      color: #b08a3c;
-      margin-bottom: 4px;
-    }
-
-    .msg {
-      font-family: "Comic Sans MS", cursive;
-      text-align: center;
-    }
-
-    @keyframes float {
-      0%,100% { transform: translateY(0); }
-      50% { transform: translateY(-6px); }
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Fantasy Quest</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
 </head>
-
 <body>
-<div id="map"></div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- Full background -->
+  <div class="bg-layer">
+    <img src="assets/background/fantasy_background_main.png" alt="" class="bg-img" />
+    <div class="bg-overlay"></div>
+    <div class="bg-vignette"></div>
+  </div>
 
-<script>
-  const DATA_URL =
-    "https://script.google.com/macros/s/AKfycbzjcZx7zTlU6riY87S8jl5zbS82sjE1tLdtTdrLdUbM3thEbpYHxl00GAbtYlZ5AiZA/exec";
+  <!-- Floating particles -->
+  <canvas id="particleCanvas" class="particle-canvas"></canvas>
 
-  /* ===== MAP ===== */
-  const map = L.map("map").setView([47.3, 19.2], 8);
-	
-	L.tileLayer(
-	  "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-	).addTo(map);
+  <!-- Main screen wrapper (phone frame) -->
+  <div class="screen">
 
-/*	
-  L.tileLayer(
-    "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-  ).addTo(map);
-*/
-  fetch(DATA_URL)
-    .then(r => r.json())
-    .then(data => {
+    <!-- TOP: Logo -->
+    <header class="top-header">
+      <img src="assets/ui/logo.png" alt="Game Logo" class="logo" />
+    </header>
 
-      data.features.forEach(f => {
+    <!-- CENTER: Hero stage -->
+    <main class="hero-stage">
 
-        /* ===== VONALAK ===== */
-        if (f.geometry.type === "LineString") {
-          L.polyline(
-            f.geometry.coordinates.map(c => [c[1], c[0]]),
-            {
-              color: f.properties.stroke,
-              weight: f.properties["stroke-width"],
-              opacity: f.properties["stroke-opacity"]
-            }
-          ).addTo(map);
-        }
+      <!-- Platform -->
+      <div class="platform-wrap">
+        <img src="assets/map/hero_platform.png" alt="" class="hero-platform" />
+      </div>
 
-        /* ===== MARKER + BUBOR�K ===== */
-        if (f.geometry.type === "Point" && f.properties.message) {
+      <!-- Aura glow behind character -->
+      <div class="aura-wrap">
+        <img src="assets/effects/hero_aura.png" alt="" class="hero-aura" />
+      </div>
 
-          const html = `
-            <div class="pin-wrap">
-              <svg class="pin-svg" viewBox="0 0 24 32">
-                <defs>
-                  <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="#e75b5b"/>
-                    <stop offset="100%" stop-color="#b83232"/>
-                  </linearGradient>
-                </defs>
-                <path fill="url(#g)"
-                  d="M12 0C7 0 3 4 3 9c0 7 9 17 9 17s9-10 9-17c0-5-4-9-9-9z"/>
-                <path fill="#fff"
-                  d="M12 8c1.7-2 5 0 0 4-5-4-1.7-6 0-4z"/>
-              </svg>
-            </div>
-          `;
+      <!-- Particle glow overlay -->
+      <div class="glow-wrap">
+        <img src="assets/effects/particle_glow.png" alt="" class="particle-glow" />
+      </div>
 
-          const icon = L.divIcon({
-            html,
-            iconSize: [48,48],
-            iconAnchor: [24,42],
-            className: ""
-          });
+      <!-- Character -->
+      <div class="character-wrap">
+        <img src="assets/characters/magikus_lany.png" alt="Hero Character" class="character" />
+      </div>
 
-          const marker = L.marker(
-            [f.geometry.coordinates[1], f.geometry.coordinates[0]],
-            { icon }
-          ).addTo(map);
+    </main>
 
-          marker.bindTooltip(
-            `
-            <div class="bubble">
-              <div class="city">${f.properties.city}</div>
-              <div class="msg">${f.properties.message}</div>
-            </div>
-            `,
-            {
-              className: "passpin",
-              direction: "top",
-              offset: [0,-18],
-              opacity: 1
-            }
-          );
-        }
+    <!-- BOTTOM: UI panel -->
+    <footer class="bottom-panel">
+
+      <!-- XP Bar -->
+      <div class="xp-section">
+        <div class="xp-bar-container">
+          <img src="assets/ui/xp_bar_frame.png" alt="" class="xp-frame" />
+          <div class="xp-fill-track">
+            <div class="xp-fill"></div>
+          </div>
+          <span class="xp-label">XP <span class="xp-value">2 480 / 5 000</span></span>
+        </div>
+      </div>
+
+      <!-- Play Button -->
+      <div class="play-wrap">
+        <div class="play-glow-ring"></div>
+        <button class="play-btn" id="playBtn" aria-label="Játék indítása">
+          <img src="assets/ui/play_button.png" alt="Játék indítása" class="play-img" />
+          <span class="play-text">KALAND KEZDÉSE</span>
+        </button>
+      </div>
+
+      <!-- Bottom nav pills -->
+      <nav class="bottom-nav">
+        <button class="nav-pill active" aria-label="Főoldal">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 21V12h6v9" stroke="currentColor" stroke-width="1.8"/></svg>
+          <span>Főoldal</span>
+        </button>
+        <button class="nav-pill" aria-label="Küldetések">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M9 12h6M9 16h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span>Küldetés</span>
+        </button>
+        <button class="nav-pill" aria-label="Felszerelés">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+          <span>Tárgyak</span>
+        </button>
+        <button class="nav-pill" aria-label="Bolt">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+          <span>Bolt</span>
+        </button>
+      </nav>
+
+    </footer>
+
+    <!-- Decorative corner runes -->
+    <div class="rune rune-tl">✦</div>
+    <div class="rune rune-tr">✦</div>
+
+    <!-- Notification badge -->
+    <div class="notif-badge">
+      <span class="notif-icon">⚔</span>
+      <span class="notif-text">Új küldetés elérhető!</span>
+      <div class="notif-dot"></div>
+    </div>
+
+    <!-- Level badge -->
+    <div class="level-badge">
+      <span class="level-label">SZint</span>
+      <span class="level-num">24</span>
+    </div>
+
+  </div><!-- /screen -->
+
+  <script src="particles.js"></script>
+  <script>
+    // Play button ripple + haptic-like feedback
+    const playBtn = document.getElementById('playBtn');
+    playBtn.addEventListener('click', function(e) {
+      this.classList.add('pressed');
+      const ripple = document.createElement('span');
+      ripple.className = 'ripple';
+      this.appendChild(ripple);
+      setTimeout(() => { ripple.remove(); this.classList.remove('pressed'); }, 600);
+    });
+
+    // Nav pill active toggle
+    document.querySelectorAll('.nav-pill').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.nav-pill').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
       });
     });
-</script>
+
+    // Particle canvas
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resize() {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    function randomParticle() {
+      return {
+        x: Math.random() * canvas.width,
+        y: canvas.height + Math.random() * 100,
+        r: Math.random() * 2.5 + 0.5,
+        speed: Math.random() * 0.6 + 0.2,
+        drift: (Math.random() - 0.5) * 0.3,
+        alpha: Math.random() * 0.6 + 0.2,
+        color: Math.random() > 0.5 ? '#f9d86e' : '#c39aff',
+        life: 0,
+        maxLife: Math.random() * 300 + 200
+      };
+    }
+
+    for (let i = 0; i < 60; i++) {
+      const p = randomParticle();
+      p.y = Math.random() * canvas.height;
+      p.life = Math.random() * p.maxLife;
+      particles.push(p);
+    }
+
+    function tick() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach((p, i) => {
+        p.life++;
+        p.y -= p.speed;
+        p.x += p.drift;
+        const fade = p.life < 40 ? p.life / 40 : p.life > p.maxLife - 40 ? (p.maxLife - p.life) / 40 : 1;
+        ctx.save();
+        ctx.globalAlpha = p.alpha * fade;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = p.color;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+        if (p.life >= p.maxLife) particles[i] = randomParticle();
+      });
+      requestAnimationFrame(tick);
+    }
+    tick();
+  </script>
 </body>
 </html>
