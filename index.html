@@ -9,106 +9,99 @@
 </head>
 <body>
 
-  <!-- Full background -->
+  <!-- BACKGROUND -->
   <div class="bg-layer">
     <img src="assets/background/fantasy_background_main.png" alt="" class="bg-img" />
     <div class="bg-overlay"></div>
     <div class="bg-vignette"></div>
   </div>
 
-  <!-- Floating particles -->
+  <!-- PARTICLE CANVAS -->
   <canvas id="particleCanvas" class="particle-canvas"></canvas>
 
-  <!-- Main screen wrapper -->
+  <!-- SCREEN -->
   <div class="screen">
 
-    <!-- TOP: Logo -->
-    <header class="top-header">
+    <!-- 1. LOGO -->
+    <div class="top-header">
       <img src="assets/ui/logo.png" alt="Game Logo" class="logo" />
-    </header>
+    </div>
 
-    <!-- CENTER: Hero stage -->
-    <main class="hero-stage">
+    <!-- 2. HERO STAGE (flex:1, all layers absolute inside) -->
+    <div class="hero-stage">
 
-      <!-- Aura glow behind character -->
       <div class="aura-wrap">
         <img src="assets/effects/hero_aura.png" alt="" class="hero-aura" />
       </div>
 
-      <!-- Particle glow overlay -->
       <div class="glow-wrap">
         <img src="assets/effects/particle_glow.png" alt="" class="particle-glow" />
       </div>
 
-      <!-- Character -->
+      <!-- CHARACTER (absolute, bottom-anchored above platform) -->
       <div class="character-wrap">
-        <img src="assets/characters/magikus_lany.png" alt="Hero Character" class="character" />
+        <img src="assets/characters/magikus_lany.png" alt="Hero" class="character" />
       </div>
 
-      <!-- Platform — below character -->
+      <!-- PLATFORM (absolute, sits at bottom of stage) -->
       <div class="platform-wrap">
         <img src="assets/map/hero_platform.png" alt="" class="hero-platform" />
       </div>
 
-    </main>
+    </div>
 
-    <!-- BOTTOM: UI panel -->
-    <footer class="bottom-panel">
+    <!-- 3. BOTTOM PANEL (flex-shrink:0, never pushed off screen) -->
+    <div class="bottom-panel">
 
-      <!-- XP Bar -->
       <div class="xp-section">
         <div class="xp-bar-container">
           <img src="assets/ui/xp_bar_frame.png" alt="" class="xp-frame" />
           <div class="xp-fill-track">
             <div class="xp-fill"></div>
           </div>
-          <span class="xp-label">XP &nbsp;<span class="xp-value">2 480 / 5 000</span></span>
+          <span class="xp-label">XP <span class="xp-value">2 480 / 5 000</span></span>
         </div>
       </div>
 
-      <!-- Play Button -->
       <div class="play-wrap">
         <div class="play-glow-ring"></div>
-        <button class="play-btn" id="playBtn" aria-label="Játék indítása">
-          <img src="assets/ui/play_button.png" alt="Játék indítása" class="play-img" />
+        <button class="play-btn" id="playBtn">
+          <img src="assets/ui/play_button.png" alt="" class="play-img" />
           <span class="play-text">KALAND KEZDÉSE</span>
         </button>
       </div>
 
-      <!-- Bottom nav pills -->
-      <nav class="bottom-nav">
-        <button class="nav-pill active" aria-label="Főoldal">
+      <div class="bottom-nav">
+        <button class="nav-pill active">
           <svg viewBox="0 0 24 24" fill="none"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 21V12h6v9" stroke="currentColor" stroke-width="1.8"/></svg>
           <span>Főoldal</span>
         </button>
-        <button class="nav-pill" aria-label="Küldetések">
+        <button class="nav-pill">
           <svg viewBox="0 0 24 24" fill="none"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M9 12h6M9 16h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
           <span>Küldetés</span>
         </button>
-        <button class="nav-pill" aria-label="Felszerelés">
+        <button class="nav-pill">
           <svg viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
           <span>Tárgyak</span>
         </button>
-        <button class="nav-pill" aria-label="Bolt">
+        <button class="nav-pill">
           <svg viewBox="0 0 24 24" fill="none"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
           <span>Bolt</span>
         </button>
-      </nav>
+      </div>
 
-    </footer>
+    </div><!-- /bottom-panel -->
 
-    <!-- Decorative corner runes -->
+    <!-- Floating badges -->
     <div class="rune rune-tl">✦</div>
     <div class="rune rune-tr">✦</div>
 
-    <!-- Notification badge -->
     <div class="notif-badge">
       <span class="notif-icon">⚔</span>
       <span class="notif-text">Új küldetés elérhető!</span>
       <div class="notif-dot"></div>
     </div>
 
-    <!-- Level badge -->
     <div class="level-badge">
       <span class="level-label">SZint</span>
       <span class="level-num">24</span>
@@ -117,17 +110,16 @@
   </div><!-- /screen -->
 
   <script>
-    // Play button ripple
-    const playBtn = document.getElementById('playBtn');
-    playBtn.addEventListener('click', function(e) {
+    /* ── Play button ── */
+    document.getElementById('playBtn').addEventListener('click', function() {
       this.classList.add('pressed');
-      const ripple = document.createElement('span');
-      ripple.className = 'ripple';
-      this.appendChild(ripple);
-      setTimeout(() => { ripple.remove(); this.classList.remove('pressed'); }, 600);
+      const r = document.createElement('span');
+      r.className = 'ripple';
+      this.appendChild(r);
+      setTimeout(() => { r.remove(); this.classList.remove('pressed'); }, 600);
     });
 
-    // Nav pill active toggle
+    /* ── Nav pills ── */
     document.querySelectorAll('.nav-pill').forEach(btn => {
       btn.addEventListener('click', function() {
         document.querySelectorAll('.nav-pill').forEach(b => b.classList.remove('active'));
@@ -135,60 +127,57 @@
       });
     });
 
-    // Particle canvas
+    /* ── Particle canvas ── */
     const canvas = document.getElementById('particleCanvas');
-    const ctx = canvas.getContext('2d');
+    const ctx    = canvas.getContext('2d');
 
     function resize() {
-      canvas.width = canvas.offsetWidth;
+      canvas.width  = canvas.offsetWidth;
       canvas.height = canvas.offsetHeight;
     }
     window.addEventListener('resize', resize);
     resize();
 
-    function randomParticle() {
+    function mkParticle() {
       return {
         x: Math.random() * canvas.width,
-        y: canvas.height + Math.random() * 100,
-        r: Math.random() * 2.5 + 0.5,
-        speed: Math.random() * 0.6 + 0.2,
-        drift: (Math.random() - 0.5) * 0.3,
-        alpha: Math.random() * 0.6 + 0.2,
+        y: canvas.height + 20,
+        r: Math.random() * 2.5 + 0.4,
+        speed: Math.random() * 0.55 + 0.18,
+        drift: (Math.random() - 0.5) * 0.28,
+        alpha: Math.random() * 0.55 + 0.2,
         color: Math.random() > 0.5 ? '#f9d86e' : '#c39aff',
         life: 0,
-        maxLife: Math.random() * 300 + 200
+        maxLife: Math.random() * 280 + 180
       };
     }
 
-    let particles = [];
-    for (let i = 0; i < 60; i++) {
-      const p = randomParticle();
-      p.y = Math.random() * canvas.height;
+    const particles = Array.from({ length: 60 }, () => {
+      const p = mkParticle();
+      p.y    = Math.random() * canvas.height;
       p.life = Math.random() * p.maxLife;
-      particles.push(p);
-    }
+      return p;
+    });
 
-    function tick() {
+    (function tick() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       particles.forEach((p, i) => {
-        p.life++;
-        p.y -= p.speed;
-        p.x += p.drift;
-        const fade = p.life < 40 ? p.life / 40 : p.life > p.maxLife - 40 ? (p.maxLife - p.life) / 40 : 1;
+        p.life++; p.y -= p.speed; p.x += p.drift;
+        const t    = p.life / p.maxLife;
+        const fade = t < 0.15 ? t / 0.15 : t > 0.8 ? (1 - t) / 0.2 : 1;
         ctx.save();
         ctx.globalAlpha = p.alpha * fade;
-        ctx.shadowBlur = 8;
+        ctx.shadowBlur  = 8;
         ctx.shadowColor = p.color;
-        ctx.fillStyle = p.color;
+        ctx.fillStyle   = p.color;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fill();
         ctx.restore();
-        if (p.life >= p.maxLife) particles[i] = randomParticle();
+        if (p.life >= p.maxLife) particles[i] = mkParticle();
       });
       requestAnimationFrame(tick);
-    }
-    tick();
+    })();
   </script>
 </body>
 </html>
