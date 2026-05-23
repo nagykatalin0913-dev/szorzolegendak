@@ -19,7 +19,7 @@
   <!-- Floating particles -->
   <canvas id="particleCanvas" class="particle-canvas"></canvas>
 
-  <!-- Main screen wrapper (phone frame) -->
+  <!-- Main screen wrapper -->
   <div class="screen">
 
     <!-- TOP: Logo -->
@@ -29,11 +29,6 @@
 
     <!-- CENTER: Hero stage -->
     <main class="hero-stage">
-
-      <!-- Platform -->
-      <div class="platform-wrap">
-        <img src="assets/map/hero_platform.png" alt="" class="hero-platform" />
-      </div>
 
       <!-- Aura glow behind character -->
       <div class="aura-wrap">
@@ -50,6 +45,11 @@
         <img src="assets/characters/magikus_lany.png" alt="Hero Character" class="character" />
       </div>
 
+      <!-- Platform — below character -->
+      <div class="platform-wrap">
+        <img src="assets/map/hero_platform.png" alt="" class="hero-platform" />
+      </div>
+
     </main>
 
     <!-- BOTTOM: UI panel -->
@@ -62,7 +62,7 @@
           <div class="xp-fill-track">
             <div class="xp-fill"></div>
           </div>
-          <span class="xp-label">XP <span class="xp-value">2 480 / 5 000</span></span>
+          <span class="xp-label">XP &nbsp;<span class="xp-value">2 480 / 5 000</span></span>
         </div>
       </div>
 
@@ -116,9 +116,8 @@
 
   </div><!-- /screen -->
 
-  <script src="particles.js"></script>
   <script>
-    // Play button ripple + haptic-like feedback
+    // Play button ripple
     const playBtn = document.getElementById('playBtn');
     playBtn.addEventListener('click', function(e) {
       this.classList.add('pressed');
@@ -139,7 +138,6 @@
     // Particle canvas
     const canvas = document.getElementById('particleCanvas');
     const ctx = canvas.getContext('2d');
-    let particles = [];
 
     function resize() {
       canvas.width = canvas.offsetWidth;
@@ -162,6 +160,7 @@
       };
     }
 
+    let particles = [];
     for (let i = 0; i < 60; i++) {
       const p = randomParticle();
       p.y = Math.random() * canvas.height;
