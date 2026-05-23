@@ -1,11 +1,11 @@
 /* ============================================================
-   FANTASY QUEST — Mobile Main Screen v1 (restored + fixed)
+   FANTASY QUEST — Mobile Main Screen (layout-fixed)
+   No scroll · Hero on platform · All UI visible
    ============================================================ */
 
 *, *::before, *::after {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+  margin: 0; padding: 0;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -16,285 +16,243 @@
   --purple:      #c39aff;
   --purple-deep: #5b1fa8;
   --purple-mid:  #7c3aed;
-  --teal:        #3aedc8;
   --dark:        #09050f;
-  --panel-bg:    rgba(8, 4, 20, 0.82);
-  --border-glow: rgba(249, 216, 110, 0.35);
   --font-title:  'Cinzel Decorative', serif;
   --font-body:   'Cinzel', serif;
   --font-ui:     'Lato', sans-serif;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --screen-w:    390px;
-  --screen-h:    844px;
 }
 
 html, body {
-  width: 100%;
-  height: 100%;
+  width: 100%; height: 100%;
   background: #000;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow: hidden;          /* NEVER scroll */
   font-family: var(--font-ui);
 }
 
 /* ── Background ── */
-.bg-layer {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-}
+.bg-layer { position: fixed; inset: 0; z-index: 0; }
 .bg-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center top;
 }
 .bg-overlay {
-  position: absolute;
-  inset: 0;
+  position: absolute; inset: 0;
   background: linear-gradient(
     180deg,
-    rgba(5,2,18,0.28) 0%,
-    rgba(5,2,18,0.08) 38%,
-    rgba(5,2,18,0.55) 72%,
-    rgba(5,2,18,0.92) 100%
+    rgba(5,2,18,0.25) 0%,
+    rgba(5,2,18,0.05) 35%,
+    rgba(5,2,18,0.50) 70%,
+    rgba(5,2,18,0.95) 100%
   );
 }
 .bg-vignette {
-  position: absolute;
-  inset: 0;
+  position: absolute; inset: 0;
   background: radial-gradient(ellipse 80% 60% at 50% 50%, transparent 40%, rgba(5,2,18,0.55) 100%);
 }
 
 /* ── Particle canvas ── */
 .particle-canvas {
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  width: 100%;
-  height: 100%;
+  position: fixed; inset: 0; z-index: 1;
+  pointer-events: none; width: 100%; height: 100%;
 }
 
-/* ── Phone Screen wrapper ── */
+/* ══════════════════════════════════════════════
+   SCREEN — fixed height, no overflow, no scroll
+══════════════════════════════════════════════ */
 .screen {
   position: relative;
-  width: min(var(--screen-w), 100vw);
-  height: min(var(--screen-h), 100dvh);
-  overflow: hidden;
+  width:  min(390px, 100vw);
+  height: min(844px, 100dvh);
+  overflow: hidden;           /* clip everything inside */
   z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-/* ── Decorative corner runes ── */
+/* ── Corner runes ── */
 .rune {
   position: absolute;
-  font-size: 14px;
-  color: var(--gold);
-  opacity: 0.5;
+  font-size: 14px; color: var(--gold); opacity: 0.5;
   animation: runePulse 3s ease-in-out infinite;
+  pointer-events: none; z-index: 20;
 }
-.rune-tl { top: 14px; left: 18px; animation-delay: 0s; }
+.rune-tl { top: 14px; left: 18px; }
 .rune-tr { top: 14px; right: 18px; animation-delay: 1.5s; }
-
 @keyframes runePulse {
-  0%, 100% { opacity: 0.3; transform: scale(1); }
-  50%       { opacity: 0.9; transform: scale(1.3); }
+  0%,100% { opacity: 0.3; transform: scale(1); }
+  50%     { opacity: 0.9; transform: scale(1.3); }
 }
 
-/* ── TOP HEADER ── */
+/* ══ TOP HEADER ══ */
 .top-header {
-  position: relative;
-  z-index: 10;
+  position: relative; z-index: 10;
   width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-top: 28px;
-  padding-bottom: 4px;
+  display: flex; align-items: center; justify-content: center;
+  padding-top: 24px; padding-bottom: 2px;
   flex-shrink: 0;
 }
-
 .logo {
-  width: clamp(160px, 68%, 240px);
-  height: auto;
+  width: clamp(150px, 65%, 230px); height: auto;
   object-fit: contain;
-  filter:
-    drop-shadow(0 0 18px rgba(249,216,110,0.55))
-    drop-shadow(0 2px 8px rgba(0,0,0,0.7));
+  filter: drop-shadow(0 0 18px rgba(249,216,110,0.55)) drop-shadow(0 2px 8px rgba(0,0,0,0.7));
   animation: logoFloat 5s ease-in-out infinite;
 }
-
 @keyframes logoFloat {
-  0%, 100% { transform: translateY(0px); }
-  50%       { transform: translateY(-5px); }
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-5px); }
 }
 
-/* ── HERO STAGE ── */
+/* ══════════════════════════════════════════════
+   HERO STAGE
+   Uses absolute positioning internally so the
+   character and platform are pixel-locked.
+   The stage itself is flex-shrink:0 with a
+   fixed height that leaves room for the bottom UI.
+══════════════════════════════════════════════ */
 .hero-stage {
   position: relative;
-  flex: 1;
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
-  overflow: visible;
-  /* small negative margin so hero bleeds closer to bottom panel */
-  padding-bottom: 0;
+  /* This height fills remaining space between header and bottom panel.
+     Bottom panel is ~200px, header ~80px → stage ≈ 844-80-200 = 564px
+     We use flex:1 but cap with max-height to stay predictable */
+  flex: 1;
+  min-height: 0;             /* allow flex child to shrink */
+  overflow: hidden;           /* clip effects that bleed outside */
 }
 
-/* Aura — behind character, positioned absolutely */
+/* All hero scene layers are absolute inside .hero-stage */
+
+/* Aura — wide, centred, bottom-anchored */
 .aura-wrap {
   position: absolute;
-  bottom: 32px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 88%;
-  z-index: 2;
-  pointer-events: none;
+  bottom: 20px; left: 50%; transform: translateX(-50%);
+  width: 85%; z-index: 2; pointer-events: none;
 }
 .hero-aura {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-  animation: auraBreath 3s ease-in-out infinite;
-  filter: blur(1px);
+  width: 100%; height: auto; object-fit: contain;
+  animation: auraBreath 3s ease-in-out infinite; filter: blur(1px);
 }
 @keyframes auraBreath {
-  0%, 100% { opacity: 0.7; transform: scale(1); }
-  50%       { opacity: 1;   transform: scale(1.06); }
+  0%,100% { opacity: 0.7; transform: scale(1); }
+  50%     { opacity: 1;   transform: scale(1.06); }
 }
 
-/* Particle glow */
+/* Particle glow ring */
 .glow-wrap {
   position: absolute;
-  bottom: 55px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 72%;
-  z-index: 3;
-  pointer-events: none;
+  bottom: 35px; left: 50%; transform: translateX(-50%);
+  width: 65%; z-index: 3; pointer-events: none;
 }
 .particle-glow {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
+  width: 100%; height: auto;
   animation: glowSpin 8s linear infinite;
-  opacity: 0.6;
-  mix-blend-mode: screen;
+  opacity: 0.6; mix-blend-mode: screen;
 }
 @keyframes glowSpin {
-  from { transform: rotate(0deg) scale(1); }
-  50%  { transform: rotate(180deg) scale(1.1); }
-  to   { transform: rotate(360deg) scale(1); }
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 
-/* ── CHARACTER — larger, sits on platform ── */
-.character-wrap {
-  position: relative;
-  z-index: 5;
-  /* FIX 1: larger character — was 68%, now 78% */
-  width: 78%;
-  /* FIX 2: negative bottom margin so feet overlap the platform */
-  margin-bottom: -28px;
-  animation: characterHover 4s ease-in-out infinite;
-  flex-shrink: 0;
-}
-.character {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-  filter:
-    drop-shadow(0 0 24px rgba(176,127,255,0.6))
-    drop-shadow(0 8px 24px rgba(0,0,0,0.85));
-}
-@keyframes characterHover {
-  0%, 100% { transform: translateY(0px); }
-  50%       { transform: translateY(-10px); }
-}
-
-/* ── PLATFORM — smaller, below character ── */
+/* ── PLATFORM ──
+   Absolute, bottom-anchored. Width controls its size. */
 .platform-wrap {
-  position: relative;
+  position: absolute;
+  bottom: 0;                 /* sits at the very bottom of the stage */
+  left: 50%; transform: translateX(-50%);
+  width: 48%;                /* smaller than before */
   z-index: 4;
-  /* FIX 3: smaller platform — was 85%, now 52% */
-  width: 52%;
-  flex-shrink: 0;
 }
 .hero-platform {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
+  width: 100%; height: auto; object-fit: contain;
   filter:
     drop-shadow(0 12px 40px rgba(90,30,180,0.6))
     drop-shadow(0 4px 16px rgba(0,0,0,0.8));
   animation: platformHover 4s ease-in-out infinite;
 }
 @keyframes platformHover {
-  0%, 100% { transform: translateY(0px); }
-  50%       { transform: translateY(-6px); }
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-5px); }
 }
 
-/* ── BOTTOM PANEL ── */
+/* ── CHARACTER ──
+   Absolute, bottom-anchored so its feet align with
+   the top surface of the platform.
+   Platform image height ≈ 18% of its width.
+   Platform width = 48% of screen (390px) ≈ 187px
+   Platform rendered height ≈ ~56px (estimate for this asset).
+   We offset character bottom = platform visible height.
+   Adjust --plat-top if asset differs. */
+.character-wrap {
+  position: absolute;
+  /* push character up by the platform's visual height so feet land on it */
+  bottom: 38px;              /* ≈ platform top surface offset from bottom:0 */
+  left: 50%; transform: translateX(-50%);
+  width: 68%;                /* 10% smaller than previous 78% */
+  z-index: 5;
+  animation: characterHover 4s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+/* override transform for float + centering together */
+.character-wrap {
+  transform: translateX(-50%);
+}
+@keyframes characterHover {
+  0%,100% { transform: translateX(-50%) translateY(0); }
+  50%     { transform: translateX(-50%) translateY(-10px); }
+}
+.character {
+  width: 100%; height: auto; display: block;
+  filter:
+    drop-shadow(0 0 22px rgba(176,127,255,0.6))
+    drop-shadow(0 8px 24px rgba(0,0,0,0.85));
+}
+
+/* ══════════════════════════════════════════════
+   BOTTOM PANEL — fixed height, never pushed down
+══════════════════════════════════════════════ */
 .bottom-panel {
-  position: relative;
-  z-index: 10;
+  position: relative; z-index: 10;
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 14px 20px 0;
+  flex-shrink: 0;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 10px;
+  padding: 12px 18px calc(12px + var(--safe-bottom));
   background: linear-gradient(
     180deg,
     transparent 0%,
-    rgba(6,2,16,0.82) 18%,
-    rgba(6,2,16,0.96) 50%,
+    rgba(6,2,16,0.78) 12%,
+    rgba(6,2,16,0.96) 45%,
     rgba(4,1,10,1) 100%
   );
-  flex-shrink: 0;
-  padding-bottom: calc(10px + var(--safe-bottom));
-  gap: 0;
 }
 
-/* ── XP BAR — FIX 4: taller, readable ── */
-.xp-section {
-  width: 100%;
-  margin-bottom: 14px;
-}
+/* ── XP BAR ── */
+.xp-section { width: 100%; }
 .xp-bar-container {
   position: relative;
   width: 100%;
-  /* FIX: increased height so text fits */
-  height: 42px;
+  height: 48px;              /* tall enough to read */
 }
 .xp-frame {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: fill;
-  z-index: 2;
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: fill; z-index: 2;
 }
 .xp-fill-track {
   position: absolute;
-  top: 50%;
-  left: 9%;
-  right: 9%;
+  top: 50%; left: 10%; right: 10%;
   transform: translateY(-50%);
-  height: 12px;
+  height: 14px;
   background: rgba(255,255,255,0.07);
-  border-radius: 8px;
-  overflow: hidden;
-  z-index: 1;
+  border-radius: 8px; overflow: hidden; z-index: 1;
 }
 .xp-fill {
-  width: 49.6%;
-  height: 100%;
+  width: 49.6%; height: 100%;
   background: linear-gradient(90deg, #7c3aed 0%, #f9d86e 60%, #fff3bb 100%);
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(249,216,110,0.6);
@@ -303,54 +261,43 @@ html, body {
 }
 .xp-fill::after {
   content: '';
-  position: absolute;
-  right: 0; top: 0; bottom: 0;
-  width: 6px;
-  background: #fff;
-  border-radius: 4px;
-  opacity: 0.8;
-  filter: blur(2px);
+  position: absolute; right: 0; top: 0; bottom: 0;
+  width: 6px; background: #fff; border-radius: 4px;
+  opacity: 0.8; filter: blur(2px);
 }
 @keyframes xpGlow {
-  0%, 100% { box-shadow: 0 0 8px rgba(249,216,110,0.5); }
-  50%       { box-shadow: 0 0 18px rgba(249,216,110,0.9), 0 0 4px rgba(176,127,255,0.5); }
+  0%,100% { box-shadow: 0 0 8px rgba(249,216,110,0.5); }
+  50%     { box-shadow: 0 0 18px rgba(249,216,110,0.9), 0 0 4px rgba(176,127,255,0.5); }
 }
 .xp-label {
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: 50%; left: 50%;
   transform: translate(-50%, -50%);
   z-index: 3;
   font-family: var(--font-body);
-  /* FIX: larger font, centred, bold, white with shadow */
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  color: rgba(255,255,255,0.92);
-  text-shadow: 0 1px 6px rgba(0,0,0,0.95), 0 0 12px rgba(0,0,0,0.8);
+  font-size: 13px; font-weight: 700;
+  letter-spacing: 0.10em;
+  color: #ffffff;
+  text-shadow:
+    0 0 2px #000, 0 0 6px #000,
+    0 2px 4px rgba(0,0,0,0.95),
+    0 0 16px rgba(249,216,110,0.5);
   white-space: nowrap;
 }
 .xp-value {
-  color: var(--gold-light);
-  font-weight: 700;
-  text-shadow: 0 0 8px rgba(249,216,110,0.7), 0 1px 4px rgba(0,0,0,0.9);
+  color: var(--gold-light); font-weight: 700;
+  text-shadow: 0 0 8px rgba(249,216,110,0.8), 0 0 2px #000;
 }
 
-/* ── PLAY BUTTON — FIX 5: readable text ── */
+/* ── PLAY BUTTON ── */
 .play-wrap {
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 16px;
+  display: flex; align-items: center; justify-content: center;
   width: 100%;
 }
-
 .play-glow-ring {
   position: absolute;
-  width: 220px;
-  height: 76px;
-  border-radius: 40px;
+  width: 228px; height: 76px; border-radius: 40px;
   box-shadow:
     0 0 30px rgba(249,216,110,0.35),
     0 0 60px rgba(176,127,255,0.2);
@@ -358,106 +305,67 @@ html, body {
   pointer-events: none;
 }
 @keyframes ringPulse {
-  0%, 100% { transform: scale(1);    opacity: 0.7; }
-  50%       { transform: scale(1.06); opacity: 1; }
+  0%,100% { transform: scale(1);    opacity: 0.7; }
+  50%     { transform: scale(1.06); opacity: 1; }
 }
-
 .play-btn {
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* slightly wider so text fits */
-  width: 220px;
-  height: 70px;
-  background: none;
-  border: none;
-  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  width: 228px; height: 72px;
+  background: none; border: none; cursor: pointer;
+  border-radius: 38px; overflow: hidden;
   transition: transform 0.12s ease;
-  overflow: hidden;
-  border-radius: 38px;
-  -webkit-user-select: none;
-  user-select: none;
+  -webkit-user-select: none; user-select: none;
 }
-.play-btn:active,
-.play-btn.pressed {
-  transform: scale(0.96);
-}
+.play-btn:active, .play-btn.pressed { transform: scale(0.96); }
 .play-img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: fill;
-  filter: drop-shadow(0 4px 20px rgba(249,216,110,0.45));
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; object-fit: fill;
+  filter: drop-shadow(0 4px 20px rgba(249,216,110,0.5));
 }
-
-/* FIX 5: play text — larger, heavier, strong shadow so it reads on any button image */
 .play-text {
-  position: relative;
-  z-index: 2;
+  position: relative; z-index: 2;
   font-family: var(--font-body);
-  font-size: 16px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
+  font-size: 17px; font-weight: 700;
+  letter-spacing: 0.14em;
   color: #ffffff;
+  /* thick dark outline so it reads on any background */
   text-shadow:
-    0 0 2px rgba(0,0,0,1),
-    0 0 8px rgba(0,0,0,0.95),
-    0 2px 4px rgba(0,0,0,0.9),
-    0 0 18px rgba(249,216,110,0.55);
+    -1px -1px 0 #000, 1px -1px 0 #000,
+    -1px  1px 0 #000, 1px  1px 0 #000,
+    0 0 12px rgba(249,216,110,0.7),
+    0 0 24px rgba(249,216,110,0.4);
   white-space: nowrap;
 }
-
-/* Ripple */
 .ripple {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  background: rgba(255,255,255,0.35);
-  border-radius: 50%;
+  position: absolute; width: 10px; height: 10px;
+  background: rgba(255,255,255,0.35); border-radius: 50%;
   transform: scale(0);
   animation: rippleAnim 0.6s ease-out forwards;
   pointer-events: none;
-  top: 50%; left: 50%;
-  margin-left: -5px; margin-top: -5px;
+  top: 50%; left: 50%; margin: -5px 0 0 -5px;
 }
-@keyframes rippleAnim {
-  to { transform: scale(28); opacity: 0; }
-}
+@keyframes rippleAnim { to { transform: scale(28); opacity: 0; } }
 
 /* ── BOTTOM NAV ── */
 .bottom-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  width: 100%;
-  gap: 6px;
+  display: flex; align-items: center; justify-content: space-around;
+  width: 100%; gap: 6px;
 }
-
 .nav-pill {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: 8px 4px 6px;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 7px 4px 6px;
   background: rgba(255,255,255,0.04);
   border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 14px;
-  cursor: pointer;
+  border-radius: 14px; cursor: pointer;
   transition: background 0.2s, border-color 0.2s, transform 0.15s;
   color: rgba(255,255,255,0.38);
 }
-.nav-pill svg {
-  width: 22px; height: 22px;
-}
+.nav-pill svg { width: 20px; height: 20px; }
 .nav-pill span {
-  font-size: 9px;
-  font-family: var(--font-ui);
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-size: 9px; font-family: var(--font-ui);
+  font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
 }
 .nav-pill.active {
   background: linear-gradient(160deg, rgba(124,58,237,0.28), rgba(249,216,110,0.10));
@@ -469,93 +377,55 @@ html, body {
 
 /* ── NOTIFICATION BADGE ── */
 .notif-badge {
-  position: absolute;
-  top: 46px; right: 14px;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  position: absolute; top: 46px; right: 14px; z-index: 20;
+  display: flex; align-items: center; gap: 6px;
   background: linear-gradient(135deg, rgba(30,10,60,0.92), rgba(60,20,120,0.88));
   border: 1px solid rgba(176,127,255,0.45);
-  border-radius: 20px;
-  padding: 5px 10px 5px 7px;
-  box-shadow: 0 4px 18px rgba(90,30,180,0.45), 0 0 0 1px rgba(176,127,255,0.1);
-  animation: notifSlide 0.7s cubic-bezier(0.22,1,0.36,1) 1.2s both;
-  opacity: 0;
+  border-radius: 20px; padding: 5px 10px 5px 7px;
+  box-shadow: 0 4px 18px rgba(90,30,180,0.45);
+  animation: notifSlide 0.7s cubic-bezier(0.22,1,0.36,1) 1.2s both; opacity: 0;
 }
 @keyframes notifSlide {
   from { transform: translateX(60px); opacity: 0; }
   to   { transform: translateX(0);    opacity: 1; }
 }
-.notif-icon { font-size: 13px; line-height: 1; }
-.notif-text {
-  font-family: var(--font-ui);
-  font-size: 9px; font-weight: 700; letter-spacing: 0.04em;
-  color: rgba(255,255,255,0.85);
-  white-space: nowrap;
-}
+.notif-icon { font-size: 13px; }
+.notif-text { font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.85); white-space: nowrap; }
 .notif-dot {
-  width: 6px; height: 6px;
-  background: #ff4d6d; border-radius: 50%;
-  box-shadow: 0 0 6px #ff4d6d;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #ff4d6d; box-shadow: 0 0 6px #ff4d6d;
   animation: dotBlink 1.2s ease-in-out infinite;
 }
-@keyframes dotBlink {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.3; }
-}
+@keyframes dotBlink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
 
 /* ── LEVEL BADGE ── */
 .level-badge {
-  position: absolute;
-  top: 46px; left: 14px;
-  z-index: 20;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  position: absolute; top: 46px; left: 14px; z-index: 20;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
   width: 46px; height: 46px;
   background: linear-gradient(145deg, rgba(200,150,10,0.18), rgba(249,216,110,0.08));
   border: 1.5px solid rgba(249,216,110,0.5);
   border-radius: 14px;
   box-shadow: 0 4px 16px rgba(200,150,10,0.3), inset 0 1px 0 rgba(255,243,187,0.2);
-  animation: levelAppear 0.6s cubic-bezier(0.22,1,0.36,1) 0.8s both;
-  opacity: 0;
+  animation: levelAppear 0.6s cubic-bezier(0.22,1,0.36,1) 0.8s both; opacity: 0;
 }
 @keyframes levelAppear {
   from { transform: scale(0.5) rotate(-10deg); opacity: 0; }
-  to   { transform: scale(1)   rotate(0deg);   opacity: 1; }
+  to   { transform: scale(1) rotate(0deg); opacity: 1; }
 }
-.level-label {
-  font-family: var(--font-ui);
-  font-size: 7px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--gold-deep); line-height: 1;
-}
-.level-num {
-  font-family: var(--font-body);
-  font-size: 20px; font-weight: 600;
-  color: var(--gold);
-  text-shadow: 0 0 10px rgba(249,216,110,0.7);
-  line-height: 1.1;
-}
+.level-label { font-size: 7px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold-deep); line-height: 1; }
+.level-num   { font-family: var(--font-body); font-size: 20px; font-weight: 600; color: var(--gold); text-shadow: 0 0 10px rgba(249,216,110,0.7); line-height: 1.1; }
 
 /* ── Entry animations ── */
-.top-header  { animation: fadeDown 0.7s cubic-bezier(0.22,1,0.36,1) both; animation-delay: 0.1s; opacity: 0; }
-.hero-stage  { animation: fadeUp   0.8s cubic-bezier(0.22,1,0.36,1) both; animation-delay: 0.25s; opacity: 0; }
-.xp-section  { animation: fadeUp   0.6s cubic-bezier(0.22,1,0.36,1) both; animation-delay: 0.5s;  opacity: 0; }
-.play-wrap   { animation: fadeUp   0.7s cubic-bezier(0.22,1,0.36,1) both; animation-delay: 0.6s;  opacity: 0; }
-.bottom-nav  { animation: fadeUp   0.6s cubic-bezier(0.22,1,0.36,1) both; animation-delay: 0.72s; opacity: 0; }
+.top-header { animation: fadeDown 0.7s cubic-bezier(0.22,1,0.36,1) 0.1s both; opacity: 0; }
+.hero-stage { animation: fadeUp   0.8s cubic-bezier(0.22,1,0.36,1) 0.2s both; opacity: 0; }
+.xp-section { animation: fadeUp   0.6s cubic-bezier(0.22,1,0.36,1) 0.5s both; opacity: 0; }
+.play-wrap  { animation: fadeUp   0.7s cubic-bezier(0.22,1,0.36,1) 0.6s both; opacity: 0; }
+.bottom-nav { animation: fadeUp   0.6s cubic-bezier(0.22,1,0.36,1) 0.7s both; opacity: 0; }
+@keyframes fadeDown { from{transform:translateY(-24px);opacity:0;} to{transform:translateY(0);opacity:1;} }
+@keyframes fadeUp   { from{transform:translateY(24px); opacity:0;} to{transform:translateY(0);opacity:1;} }
 
-@keyframes fadeDown {
-  from { transform: translateY(-24px); opacity: 0; }
-  to   { transform: translateY(0);     opacity: 1; }
-}
-@keyframes fadeUp {
-  from { transform: translateY(24px); opacity: 0; }
-  to   { transform: translateY(0);    opacity: 1; }
-}
-
-/* ── Desktop: centered phone frame ── */
+/* ── Desktop phone frame ── */
 @media (min-width: 440px) {
   body { background: #000; }
   .screen {
