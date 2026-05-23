@@ -1,250 +1,195 @@
 <!DOCTYPE html>
 <html lang="hu">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Fantasy Quest</title>
-  <link rel="stylesheet" href="style.css"/>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════
-     LAYER 0 — Background (blurred, darkened)
-═══════════════════════════════════════════ -->
-<div class="bg-root">
-  <img src="assets/background/fantasy_background_main.png" alt="" class="bg-img"/>
-  <div class="bg-blur-overlay"></div>
-  <div class="bg-darken"></div>
-  <div class="bg-cinematic-top"></div>
-  <div class="bg-cinematic-bot"></div>
-  <div class="bg-vignette"></div>
-</div>
-
-<!-- ═══════════════════════════════════════════
-     LAYER 1 — Foreground particle canvas (CSS)
-═══════════════════════════════════════════ -->
-<canvas id="fgCanvas" class="fg-canvas"></canvas>
-
-<!-- ═══════════════════════════════════════════
-     LAYER 2 — Screen
-═══════════════════════════════════════════ -->
-<div class="screen">
-
-  <!-- TOP BAR -->
-  <div class="top-bar">
-    <div class="top-left">
-      <div class="avatar-ring">
-        <div class="avatar-inner">⚔</div>
-      </div>
-      <div class="player-info">
-        <div class="player-name">Aryndel</div>
-        <div class="player-sub">Misztikus Mágus</div>
-      </div>
-    </div>
-    <img src="assets/ui/logo.png" alt="Logo" class="top-logo"/>
-    <div class="top-right">
-      <div class="gem-pill">
-        <span class="gem-icon">💎</span>
-        <span class="gem-count">4 820</span>
-      </div>
-    </div>
+  <!-- Full background -->
+  <div class="bg-layer">
+    <img src="assets/background/fantasy_background_main.png" alt="" class="bg-img" />
+    <div class="bg-overlay"></div>
+    <div class="bg-vignette"></div>
   </div>
 
-  <!-- XP BAR — tight under top bar -->
-  <div class="xp-row">
-    <div class="xp-wrap">
-      <img src="assets/ui/xp_bar_frame.png" alt="" class="xp-frame-img"/>
-      <div class="xp-track">
-        <div class="xp-fill"></div>
-        <div class="xp-shine"></div>
+  <!-- Floating particles -->
+  <canvas id="particleCanvas" class="particle-canvas"></canvas>
+
+  <!-- Main screen wrapper (phone frame) -->
+  <div class="screen">
+
+    <!-- TOP: Logo -->
+    <header class="top-header">
+      <img src="assets/ui/logo.png" alt="Game Logo" class="logo" />
+    </header>
+
+    <!-- CENTER: Hero stage -->
+    <main class="hero-stage">
+
+      <!-- Platform -->
+      <div class="platform-wrap">
+        <img src="assets/map/hero_platform.png" alt="" class="hero-platform" />
       </div>
-      <span class="xp-txt">SZint 24 · 2 480 / 5 000 XP</span>
-    </div>
-  </div>
 
-  <!-- ════ HERO SCENE — core composition ════ -->
-  <div class="hero-scene">
+      <!-- Aura glow behind character -->
+      <div class="aura-wrap">
+        <img src="assets/effects/hero_aura.png" alt="" class="hero-aura" />
+      </div>
 
-    <!-- BACK glow radial -->
-    <div class="scene-back-glow"></div>
+      <!-- Particle glow overlay -->
+      <div class="glow-wrap">
+        <img src="assets/effects/particle_glow.png" alt="" class="particle-glow" />
+      </div>
 
-    <!-- Aura (behind character) -->
-    <div class="layer-aura">
-      <img src="assets/effects/hero_aura.png" alt="" class="aura-img"/>
-    </div>
+      <!-- Character -->
+      <div class="character-wrap">
+        <img src="assets/characters/magikus_lany.png" alt="Hero Character" class="character" />
+      </div>
 
-    <!-- Particle glow ring -->
-    <div class="layer-glow-ring">
-      <img src="assets/effects/particle_glow.png" alt="" class="glow-ring-img"/>
-    </div>
+    </main>
 
-    <!-- Floating crystals (CSS-generated) -->
-    <div class="crystals">
-      <div class="crystal c1">◆</div>
-      <div class="crystal c2">◇</div>
-      <div class="crystal c3">◆</div>
-      <div class="crystal c4">◇</div>
-      <div class="crystal c5">✦</div>
-      <div class="crystal c6">✦</div>
-    </div>
+    <!-- BOTTOM: UI panel -->
+    <footer class="bottom-panel">
 
-    <!-- CHARACTER — hero, biggest layer -->
-    <div class="layer-character">
-      <img src="assets/characters/magikus_lany.png" alt="Hero" class="character-img"/>
-      <!-- character bottom glow -->
-      <div class="char-foot-glow"></div>
-    </div>
-
-    <!-- Platform (small, below hero) -->
-    <div class="layer-platform">
-      <img src="assets/map/hero_platform.png" alt="" class="platform-img"/>
-    </div>
-
-    <!-- PLAY BUTTON — overlaps hero bottom, cinematic position -->
-    <div class="play-zone">
-      <div class="play-outer-ring"></div>
-      <div class="play-mid-ring"></div>
-      <button class="play-btn" id="playBtn">
-        <img src="assets/ui/play_button.png" alt="" class="play-bg-img"/>
-        <div class="play-inner">
-          <span class="play-sub">Nyomj rá és</span>
-          <span class="play-main">KALANDOZZ</span>
+      <!-- XP Bar -->
+      <div class="xp-section">
+        <div class="xp-bar-container">
+          <img src="assets/ui/xp_bar_frame.png" alt="" class="xp-frame" />
+          <div class="xp-fill-track">
+            <div class="xp-fill"></div>
+          </div>
+          <span class="xp-label">XP <span class="xp-value">2 480 / 5 000</span></span>
         </div>
-        <div class="play-sparkles">
-          <span class="ps ps1">✦</span>
-          <span class="ps ps2">✦</span>
-          <span class="ps ps3">✦</span>
-        </div>
-      </button>
-    </div>
+      </div>
 
-    <!-- Foreground depth fog (bottom of scene) -->
-    <div class="scene-fg-fog"></div>
+      <!-- Play Button -->
+      <div class="play-wrap">
+        <div class="play-glow-ring"></div>
+        <button class="play-btn" id="playBtn" aria-label="Játék indítása">
+          <img src="assets/ui/play_button.png" alt="Játék indítása" class="play-img" />
+          <span class="play-text">KALAND KEZDÉSE</span>
+        </button>
+      </div>
 
-  </div><!-- /hero-scene -->
+      <!-- Bottom nav pills -->
+      <nav class="bottom-nav">
+        <button class="nav-pill active" aria-label="Főoldal">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 21V12h6v9" stroke="currentColor" stroke-width="1.8"/></svg>
+          <span>Főoldal</span>
+        </button>
+        <button class="nav-pill" aria-label="Küldetések">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M9 12h6M9 16h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span>Küldetés</span>
+        </button>
+        <button class="nav-pill" aria-label="Felszerelés">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+          <span>Tárgyak</span>
+        </button>
+        <button class="nav-pill" aria-label="Bolt">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+          <span>Bolt</span>
+        </button>
+      </nav>
 
-  <!-- ════ BOTTOM DOCK ════ -->
-  <div class="bottom-dock">
+    </footer>
 
-    <!-- Quick-action row -->
-    <div class="quick-row">
-      <button class="quick-btn qb-red">
-        <span class="qb-icon">⚔</span>
-        <span class="qb-label">Csata</span>
-        <div class="qb-badge">3</div>
-      </button>
-      <button class="quick-btn qb-purple">
-        <span class="qb-icon">📜</span>
-        <span class="qb-label">Küldetés</span>
-        <div class="qb-badge">!</div>
-      </button>
-      <button class="quick-btn qb-blue">
-        <span class="qb-icon">🏰</span>
-        <span class="qb-label">Vár</span>
-      </button>
-      <button class="quick-btn qb-gold">
-        <span class="qb-icon">🛒</span>
-        <span class="qb-label">Bolt</span>
-      </button>
-    </div>
+    <!-- Decorative corner runes -->
+    <div class="rune rune-tl">✦</div>
+    <div class="rune rune-tr">✦</div>
 
-    <!-- Notification ribbon -->
-    <div class="notif-ribbon">
+    <!-- Notification badge -->
+    <div class="notif-badge">
+      <span class="notif-icon">⚔</span>
+      <span class="notif-text">Új küldetés elérhető!</span>
       <div class="notif-dot"></div>
-      <span class="notif-sword">⚔</span>
-      <span class="notif-msg">Új küldetés vár rád — Elesett Királyság</span>
-      <span class="notif-arrow">›</span>
     </div>
 
-  </div>
+    <!-- Level badge -->
+    <div class="level-badge">
+      <span class="level-label">SZint</span>
+      <span class="level-num">24</span>
+    </div>
 
-  <!-- Level badge floating -->
-  <div class="lvl-badge">
-    <span class="lvl-n">24</span>
-    <span class="lvl-l">LVL</span>
-  </div>
+  </div><!-- /screen -->
 
-  <!-- Cinematic corner details -->
-  <div class="corner-tl"></div>
-  <div class="corner-tr"></div>
+  <script src="particles.js"></script>
+  <script>
+    // Play button ripple + haptic-like feedback
+    const playBtn = document.getElementById('playBtn');
+    playBtn.addEventListener('click', function(e) {
+      this.classList.add('pressed');
+      const ripple = document.createElement('span');
+      ripple.className = 'ripple';
+      this.appendChild(ripple);
+      setTimeout(() => { ripple.remove(); this.classList.remove('pressed'); }, 600);
+    });
 
-</div><!-- /screen -->
+    // Nav pill active toggle
+    document.querySelectorAll('.nav-pill').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.nav-pill').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
 
-<script>
-/* ── Foreground particle canvas ── */
-const C = document.getElementById('fgCanvas');
-const X = C.getContext('2d');
+    // Particle canvas
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
 
-function resize(){
-  C.width  = C.offsetWidth  * devicePixelRatio;
-  C.height = C.offsetHeight * devicePixelRatio;
-  X.scale(devicePixelRatio, devicePixelRatio);
-}
-window.addEventListener('resize', resize);
-resize();
+    function resize() {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
 
-const W = () => C.offsetWidth, H = () => C.offsetHeight;
+    function randomParticle() {
+      return {
+        x: Math.random() * canvas.width,
+        y: canvas.height + Math.random() * 100,
+        r: Math.random() * 2.5 + 0.5,
+        speed: Math.random() * 0.6 + 0.2,
+        drift: (Math.random() - 0.5) * 0.3,
+        alpha: Math.random() * 0.6 + 0.2,
+        color: Math.random() > 0.5 ? '#f9d86e' : '#c39aff',
+        life: 0,
+        maxLife: Math.random() * 300 + 200
+      };
+    }
 
-const COLS = ['#f9d86e','#c39aff','#7ef9f0','#fff3bb','#ff9de2'];
-let pts = [];
+    for (let i = 0; i < 60; i++) {
+      const p = randomParticle();
+      p.y = Math.random() * canvas.height;
+      p.life = Math.random() * p.maxLife;
+      particles.push(p);
+    }
 
-function mkPt(){
-  // Cluster particles more in the center (hero area)
-  const cx = W() * 0.5 + (Math.random()-0.5) * W() * 0.7;
-  return {
-    x: cx,
-    y: H() * (0.25 + Math.random() * 0.65),
-    r: Math.random() * 2.2 + 0.4,
-    vx: (Math.random()-0.5) * 0.35,
-    vy: -(Math.random() * 0.55 + 0.15),
-    a: 0,
-    maxA: Math.random() * 0.55 + 0.2,
-    col: COLS[Math.floor(Math.random()*COLS.length)],
-    life: 0,
-    maxL: 180 + Math.random() * 220
-  };
-}
-
-for(let i=0;i<80;i++){
-  const p = mkPt();
-  p.life = Math.random() * p.maxL;
-  p.a    = p.maxA * Math.random();
-  pts.push(p);
-}
-
-function draw(){
-  X.clearRect(0,0,W(),H());
-  pts.forEach((p,i)=>{
-    p.life++;
-    p.x += p.vx;
-    p.y += p.vy;
-    const t = p.life/p.maxL;
-    const fade = t < 0.15 ? t/0.15 : t > 0.8 ? (1-t)/0.2 : 1;
-    p.a = p.maxA * fade;
-
-    X.save();
-    X.globalAlpha = p.a;
-    X.shadowBlur  = 10;
-    X.shadowColor = p.col;
-    X.fillStyle   = p.col;
-    X.beginPath();
-    X.arc(p.x, p.y, p.r, 0, Math.PI*2);
-    X.fill();
-    X.restore();
-
-    if(p.life >= p.maxL) pts[i] = mkPt();
-  });
-  requestAnimationFrame(draw);
-}
-draw();
-
-/* ── Play button tap ── */
-const btn = document.getElementById('playBtn');
-btn.addEventListener('click', function(){
-  this.classList.add('tap');
-  setTimeout(()=>this.classList.remove('tap'),350);
-});
-</script>
+    function tick() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach((p, i) => {
+        p.life++;
+        p.y -= p.speed;
+        p.x += p.drift;
+        const fade = p.life < 40 ? p.life / 40 : p.life > p.maxLife - 40 ? (p.maxLife - p.life) / 40 : 1;
+        ctx.save();
+        ctx.globalAlpha = p.alpha * fade;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = p.color;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+        if (p.life >= p.maxLife) particles[i] = randomParticle();
+      });
+      requestAnimationFrame(tick);
+    }
+    tick();
+  </script>
 </body>
 </html>
