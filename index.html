@@ -1,3 +1,36 @@
+  <!-- v6 -->
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Fantasy Quest</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- BACKGROUND -->
+  <div class="bg-layer">
+    <img src="assets/background/fantasy_background_main.png" alt="" class="bg-img" />
+    <div class="bg-overlay"></div>
+    <div class="bg-vignette"></div>
+  </div>
+
+  <!-- PARTICLE CANVAS -->
+  <canvas id="particleCanvas" class="particle-canvas"></canvas>
+
+  <!-- SCREEN -->
+  <div class="screen">
+
+    <!-- 1. LOGO -->
+    <div class="top-header">
+      <img src="assets/ui/logo.png" alt="Game Logo" class="logo" />
+    </div>
+
+    <!-- 2. HERO STAGE (flex:1, all layers absolute inside) -->
+    <div class="hero-stage">
+
       <div class="aura-wrap">
         <img src="assets/effects/hero_aura.png" alt="" class="hero-aura" />
       </div>
