@@ -1,4 +1,4 @@
-<!-- v14 -->
+<!-- v15 -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -31,29 +31,22 @@
     <!-- 2. HERO STAGE (flex:1, all layers absolute inside) -->
     <div class="hero-stage">
 
-      <!-- HERO GROUP: fixed 320x420 wrapper, all layers absolute inside -->
+      <div class="aura-wrap">
+        <img src="assets/effects/hero_aura.png" alt="" class="hero-aura" />
+      </div>
+
+      <div class="glow-wrap">
+        <img src="assets/effects/particle_glow.png" alt="" class="particle-glow" />
+      </div>
+
+      <div class="platform-wrap">
+        <img src="assets/map/hero_platform.png" alt="" class="hero-platform" />
+      </div>
+
       <div class="hero-group">
-
-        <!-- AURA — z-index 2, behind platform and hero -->
-        <div class="aura-wrap">
-          <img src="assets/effects/hero_aura.png" alt="" class="hero-aura" />
-        </div>
-
-        <!-- PARTICLE GLOW — z-index 3 -->
-        <div class="glow-wrap">
-          <img src="assets/effects/particle_glow.png" alt="" class="particle-glow" />
-        </div>
-
-        <!-- PLATFORM — z-index 2, bottom: 0 -->
-        <div class="platform-wrap">
-          <img src="assets/map/hero_platform.png" alt="" class="hero-platform" />
-        </div>
-
-        <!-- CHARACTER — z-index 4, bottom: 90px, sits INTO platform -->
         <div class="character-wrap">
           <img src="assets/characters/magikus_lany.png" alt="Hero" class="character" />
         </div>
-
       </div>
 
     </div>
