@@ -1,4 +1,4 @@
-/* v11 */
+/* v13 */
 /* ============================================================
    FANTASY QUEST — Mobile Main Screen (layout-fixed)
    No scroll · Hero on platform · All UI visible
@@ -110,29 +110,20 @@ html, body {
 
 /* ══════════════════════════════════════════════
    HERO STAGE
-   Uses absolute positioning internally so the
-   character and platform are pixel-locked.
-   The stage itself is flex-shrink:0 with a
-   fixed height that leaves room for the bottom UI.
 ══════════════════════════════════════════════ */
 .hero-stage {
   position: relative;
   width: 100%;
-  /* This height fills remaining space between header and bottom panel.
-     Bottom panel is ~200px, header ~80px → stage ≈ 844-80-200 = 564px
-     We use flex:1 but cap with max-height to stay predictable */
   flex: 1;
-  min-height: 0;             /* allow flex child to shrink */
-  overflow: hidden;           /* clip effects that bleed outside */
+  min-height: 0;
+  overflow: hidden;
 }
 
-/* All hero scene layers are absolute inside .hero-stage */
-
-/* Aura — wide, centred, bottom-anchored */
+/* Aura */
 .aura-wrap {
   position: absolute;
-  bottom: 20px; left: 50%; transform: translateX(-50%);
-  width: 85%; z-index: 2; pointer-events: none;
+  bottom: 10%; left: 50%; transform: translateX(-50%);
+  width: 90%; z-index: 2; pointer-events: none;
 }
 .hero-aura {
   width: 100%; height: auto; object-fit: contain;
@@ -146,7 +137,7 @@ html, body {
 /* Particle glow ring */
 .glow-wrap {
   position: absolute;
-  bottom: 35px; left: 50%; transform: translateX(-50%);
+  bottom: 12%; left: 50%; transform: translateX(-50%);
   width: 65%; z-index: 3; pointer-events: none;
 }
 .particle-glow {
@@ -159,30 +150,46 @@ html, body {
   to   { transform: rotate(360deg); }
 }
 
-/* ── HERO GROUP — character + platform locked together ── */
+/* ── HERO GROUP ──
+   Flex column: character on top, platform below.
+   bottom: 0 = platform sits at stage floor.
+   The group width controls both sizes together.
+   margin-bottom on character = overlap onto platform.
+   The group must fit within the stage height —
+   width: 60% on 390px screen = 234px wide group,
+   character aspect ~1.4 tall = ~197px,
+   platform aspect ~0.35 tall = ~82px,
+   total ~260px which fits in ~500px stage. ── */
 .hero-group {
   position: absolute;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 52%;
+  width: 60%;
   z-index: 4;
   display: flex;
   flex-direction: column;
   align-items: center;
   animation: groupHover 4s ease-in-out infinite;
+  /* critical: don't let hover animation push beyond stage top */
+  transform-origin: bottom center;
 }
 @keyframes groupHover {
   0%,100% { transform: translateX(-50%) translateY(0); }
-  50%     { transform: translateX(-50%) translateY(-10px); }
+  50%     { transform: translateX(-50%) translateY(-8px); }
 }
 
-/* CHARACTER — relative inside group, overlaps platform top */
+/* CHARACTER */
 .character-wrap {
   position: relative;
-  width: 88%;
+  width: 90%;
   z-index: 2;
-  margin-bottom: -20px;
+  /* negative margin = feet overlap platform top surface.
+     Platform rendered height ≈ 35% of platform width.
+     Platform width = 100% of group = 234px → platform height ≈ 82px.
+     Top surface of platform ≈ top 40% of image = ~33px from top.
+     So character bottom should overlap by ~33px. */
+  margin-bottom: -22px;
 }
 .character {
   width: 100%; height: auto; display: block;
@@ -191,14 +198,14 @@ html, body {
     drop-shadow(0 8px 24px rgba(0,0,0,0.85));
 }
 
-/* PLATFORM — relative inside group, below character */
+/* PLATFORM */
 .platform-wrap {
   position: relative;
   width: 100%;
   z-index: 1;
 }
 .hero-platform {
-  width: 100%; height: auto; object-fit: contain;
+  width: 100%; height: auto; display: block;
   filter:
     drop-shadow(0 12px 40px rgba(90,30,180,0.6))
     drop-shadow(0 4px 16px rgba(0,0,0,0.8));
