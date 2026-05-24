@@ -1,4 +1,4 @@
-/* v7 */
+/* v8 */
 /* ============================================================
    FANTASY QUEST — Mobile Main Screen (layout-fixed)
    No scroll · Hero on platform · All UI visible
@@ -319,10 +319,10 @@ html, body {
 }
 .play-glow-ring {
   position: absolute;
-  width: 200px; height: 68px; border-radius: 34px;
+  width: 220px; height: 72px; border-radius: 36px;
   box-shadow:
-    0 0 30px rgba(249,216,110,0.35),
-    0 0 60px rgba(176,127,255,0.2);
+    0 0 20px rgba(249,216,110,0.4),
+    0 0 40px rgba(176,127,255,0.15);
   animation: ringPulse 2.5s ease-in-out infinite;
   pointer-events: none;
 }
@@ -333,23 +333,23 @@ html, body {
 .play-btn {
   position: relative;
   display: flex; align-items: center; justify-content: center;
-  /* wide enough to show the full asset */
-  width: 300px; height: 94px;
   background: none; border: none; cursor: pointer;
-  border-radius: 0;          /* let asset define shape */
-  overflow: visible;          /* don't clip the asset */
+  /* no fixed size — the img inside drives the size */
+  width: auto; height: auto;
+  padding: 0;
   transition: transform 0.12s ease;
   -webkit-user-select: none; user-select: none;
 }
 .play-btn:active, .play-btn.pressed { transform: scale(0.96); }
 
-/* The asset fills the button area as the background decoration */
 .play-img {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: contain;        /* contain so the full button shape shows */
-  filter: drop-shadow(0 4px 22px rgba(249,216,110,0.5))
-          drop-shadow(0 0 12px rgba(176,127,255,0.35));
+  /* natural size × scale factor — this directly controls how big the button looks */
+  display: block;
+  width: auto;
+  height: 110px;   /* increase this to make button bigger */
+  object-fit: contain;
+  filter: drop-shadow(0 4px 22px rgba(249,216,110,0.55))
+          drop-shadow(0 0 14px rgba(176,127,255,0.4));
 }
 
 /* play-text removed — text is part of the button asset image */
