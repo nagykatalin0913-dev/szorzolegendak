@@ -1,4 +1,4 @@
-/* v16 */
+/* v17 */
 /* ============================================================
    FANTASY QUEST — Mobile Main Screen (layout-fixed)
    No scroll · Hero on platform · All UI visible
@@ -99,7 +99,7 @@ html, body {
   flex-shrink: 0;
 }
 .logo {
-  width: 42%; height: auto;
+  width: clamp(130px, 48%, 190px); height: auto;
   object-fit: contain;
   filter: drop-shadow(0 0 18px rgba(249,216,110,0.55)) drop-shadow(0 2px 8px rgba(0,0,0,0.7));
   animation: logoFloat 5s ease-in-out infinite;
@@ -115,25 +115,25 @@ html, body {
 .hero-stage {
   position: relative;
   width: 100%;
-  flex: 1;
-  min-height: 0;
+  height: 42%;
+  flex: none;
   overflow: hidden;
 }
 
 /* AURA — width: hero(34% of 390=132px) × 1.55 = 204px, bottom: 40% of stage */
 .aura-wrap {
   position: absolute;
-  bottom: 34%;
+  bottom: 18px;
   left: 50%;
   transform: translateX(-50%);
-  width: 204px;
+  width: 62%;
   z-index: 2;
   pointer-events: none;
 }
 .hero-aura {
   width: 100%; height: auto; display: block;
   filter: blur(1px);
-  opacity: 0.55;
+  opacity: 0.7;
   animation: auraBreath 3s ease-in-out infinite;
 }
 @keyframes auraBreath {
@@ -164,10 +164,10 @@ html, body {
 /* PLATFORM — hero(132px) × 1.45 = 191px wide, bottom: 34% of stage */
 .platform-wrap {
   position: absolute;
-  bottom: 34%;
+  bottom: -6px;
   left: 50%;
   transform: translateX(-50%);
-  width: 191px;
+  width: 42%;
   z-index: 4;
 }
 .hero-platform {
@@ -181,10 +181,10 @@ html, body {
 .hero-group { display: contents; }
 .character-wrap {
   position: absolute;
-  bottom: 42%;
+  bottom: 42px;
   left: 50%;
   transform: translateX(-50%);
-  width: 133px;
+  width: 44%;
   z-index: 5;
   animation: heroFloat 4s ease-in-out infinite;
 }
@@ -318,7 +318,7 @@ html, body {
 
 /* unified sizing system */
 .play-wrap {
-  --play-width: 164px;
+  --play-width: 220px;
   --play-height: 72px;
 }
 
