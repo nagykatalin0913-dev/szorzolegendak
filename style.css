@@ -1,4 +1,4 @@
-/* v8 */
+/* v9 */
 /* ============================================================
    FANTASY QUEST — Mobile Main Screen (layout-fixed)
    No scroll · Hero on platform · All UI visible
@@ -159,49 +159,49 @@ html, body {
   to   { transform: rotate(360deg); }
 }
 
-/* ── PLATFORM ──
-   Absolute, bottom-anchored. Width controls its size. */
-.platform-wrap {
+/* ── HERO GROUP — character + platform locked together ── */
+.hero-group {
   position: absolute;
-  bottom: 0;                 /* sits at the very bottom of the stage */
-  left: 50%; transform: translateX(-50%);
-  width: 48%;                /* smaller than before */
-  z-index: 4;
-}
-.hero-platform {
-  width: 100%; height: auto; object-fit: contain;
-  filter:
-    drop-shadow(0 12px 40px rgba(90,30,180,0.6))
-    drop-shadow(0 4px 16px rgba(0,0,0,0.8));
-  animation: platformHover 4s ease-in-out infinite;
-}
-@keyframes platformHover {
-  0%,100% { transform: translateY(0); }
-  50%     { transform: translateY(-5px); }
-}
-
-/* ── CHARACTER ── */
-.character-wrap {
-  position: absolute;
-  /* feet land on platform top surface:
-     platform bottom:0, platform ~48% wide on 390px ≈ 187px wide,
-     asset aspect ratio ≈ 0.55 tall → rendered height ≈ 103px
-     top surface is roughly 30% from top of image ≈ 31px from bottom */
-  bottom: 60px;
+  bottom: 0;
   left: 50%;
-  width: 58%;                /* smaller → moves up naturally */
-  z-index: 5;
-  animation: characterHover 4s ease-in-out infinite;
+  transform: translateX(-50%);
+  width: 62%;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: groupHover 4s ease-in-out infinite;
 }
-@keyframes characterHover {
+@keyframes groupHover {
   0%,100% { transform: translateX(-50%) translateY(0); }
   50%     { transform: translateX(-50%) translateY(-10px); }
+}
+
+/* CHARACTER — relative inside group, overlaps platform top */
+.character-wrap {
+  position: relative;
+  width: 88%;
+  z-index: 2;
+  margin-bottom: -20px;
 }
 .character {
   width: 100%; height: auto; display: block;
   filter:
     drop-shadow(0 0 22px rgba(176,127,255,0.6))
     drop-shadow(0 8px 24px rgba(0,0,0,0.85));
+}
+
+/* PLATFORM — relative inside group, below character */
+.platform-wrap {
+  position: relative;
+  width: 100%;
+  z-index: 1;
+}
+.hero-platform {
+  width: 100%; height: auto; object-fit: contain;
+  filter:
+    drop-shadow(0 12px 40px rgba(90,30,180,0.6))
+    drop-shadow(0 4px 16px rgba(0,0,0,0.8));
 }
 
 /* ══════════════════════════════════════════════
@@ -319,7 +319,7 @@ html, body {
 }
 .play-glow-ring {
   position: absolute;
-  width: 220px; height: 72px; border-radius: 36px;
+  width: 180px; height: 60px; border-radius: 30px;
   box-shadow:
     0 0 20px rgba(249,216,110,0.4),
     0 0 40px rgba(176,127,255,0.15);
@@ -346,7 +346,7 @@ html, body {
   /* natural size × scale factor — this directly controls how big the button looks */
   display: block;
   width: auto;
-  height: 110px;   /* increase this to make button bigger */
+  height: 160px;
   object-fit: contain;
   filter: drop-shadow(0 4px 22px rgba(249,216,110,0.55))
           drop-shadow(0 0 14px rgba(176,127,255,0.4));
