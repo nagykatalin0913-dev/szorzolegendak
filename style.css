@@ -1,4 +1,4 @@
-/* v6 */
+/* v10 */
 /* ============================================================
    FANTASY QUEST — Mobile Main Screen (layout-fixed)
    No scroll · Hero on platform · All UI visible
@@ -159,49 +159,49 @@ html, body {
   to   { transform: rotate(360deg); }
 }
 
-/* ── PLATFORM ──
-   Absolute, bottom-anchored. Width controls its size. */
-.platform-wrap {
+/* ── HERO GROUP — character + platform locked together ── */
+.hero-group {
   position: absolute;
-  bottom: 0;                 /* sits at the very bottom of the stage */
-  left: 50%; transform: translateX(-50%);
-  width: 48%;                /* smaller than before */
-  z-index: 4;
-}
-.hero-platform {
-  width: 100%; height: auto; object-fit: contain;
-  filter:
-    drop-shadow(0 12px 40px rgba(90,30,180,0.6))
-    drop-shadow(0 4px 16px rgba(0,0,0,0.8));
-  animation: platformHover 4s ease-in-out infinite;
-}
-@keyframes platformHover {
-  0%,100% { transform: translateY(0); }
-  50%     { transform: translateY(-5px); }
-}
-
-/* ── CHARACTER ── */
-.character-wrap {
-  position: absolute;
-  /* feet land on platform top surface:
-     platform bottom:0, platform ~48% wide on 390px ≈ 187px wide,
-     asset aspect ratio ≈ 0.55 tall → rendered height ≈ 103px
-     top surface is roughly 30% from top of image ≈ 31px from bottom */
-  bottom: 60px;
+  bottom: 0;
   left: 50%;
-  width: 58%;                /* smaller → moves up naturally */
-  z-index: 5;
-  animation: characterHover 4s ease-in-out infinite;
+  transform: translateX(-50%);
+  width: 62%;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: groupHover 4s ease-in-out infinite;
 }
-@keyframes characterHover {
+@keyframes groupHover {
   0%,100% { transform: translateX(-50%) translateY(0); }
   50%     { transform: translateX(-50%) translateY(-10px); }
+}
+
+/* CHARACTER — relative inside group, overlaps platform top */
+.character-wrap {
+  position: relative;
+  width: 88%;
+  z-index: 2;
+  margin-bottom: -20px;
 }
 .character {
   width: 100%; height: auto; display: block;
   filter:
     drop-shadow(0 0 22px rgba(176,127,255,0.6))
     drop-shadow(0 8px 24px rgba(0,0,0,0.85));
+}
+
+/* PLATFORM — relative inside group, below character */
+.platform-wrap {
+  position: relative;
+  width: 100%;
+  z-index: 1;
+}
+.hero-platform {
+  width: 100%; height: auto; object-fit: contain;
+  filter:
+    drop-shadow(0 12px 40px rgba(90,30,180,0.6))
+    drop-shadow(0 4px 16px rgba(0,0,0,0.8));
 }
 
 /* ══════════════════════════════════════════════
@@ -314,45 +314,107 @@ html, body {
 /* ── PLAY BUTTON ── */
 .play-wrap {
   position: relative;
-  display: flex; align-items: center; justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
+  isolation: isolate;
 }
+
+/* unified sizing system */
+.play-wrap {
+  --play-width: 295px;
+  --play-height: 96px;
+}
+
 .play-glow-ring {
   position: absolute;
-  width: 230px; height: 78px; border-radius: 40px;
+  width: calc(var(--play-width) * 1.02);
+  height: calc(var(--play-height) * 1.25);
+  border-radius: 999px;
+
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(249,216,110,0.28) 0%,
+      rgba(176,127,255,0.16) 45%,
+      rgba(176,127,255,0.05) 65%,
+      transparent 80%
+    );
+
+  filter: blur(16px);
+
   box-shadow:
-    0 0 30px rgba(249,216,110,0.35),
-    0 0 60px rgba(176,127,255,0.2);
-  animation: ringPulse 2.5s ease-in-out infinite;
+    0 0 40px rgba(249,216,110,0.32),
+    0 0 90px rgba(176,127,255,0.22);
+
+  animation: ringPulse 2.8s ease-in-out infinite;
   pointer-events: none;
+  z-index: 0;
 }
+
 @keyframes ringPulse {
-  0%,100% { transform: scale(1);    opacity: 0.7; }
-  50%     { transform: scale(1.06); opacity: 1; }
+  0%,100% {
+    transform: scale(1);
+    opacity: 0.72;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
 }
+
 .play-btn {
   position: relative;
-  display: flex; align-items: center; justify-content: center;
-  /* wide enough to show the full asset */
-  width: 280px; height: 88px;
-  background: none; border: none; cursor: pointer;
-  border-radius: 0;          /* let asset define shape */
-  overflow: visible;          /* don't clip the asset */
-  transition: transform 0.12s ease;
-  -webkit-user-select: none; user-select: none;
-}
-.play-btn:active, .play-btn.pressed { transform: scale(0.96); }
+  z-index: 2;
 
-/* The asset fills the button area as the background decoration */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: var(--play-width);
+  height: var(--play-height);
+
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  overflow: visible;
+  border-radius: 0;
+
+  transition:
+    transform 0.14s ease,
+    filter 0.2s ease;
+
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.play-btn:hover {
+  filter: brightness(1.06);
+}
+
+.play-btn:active,
+.play-btn.pressed {
+  transform: scale(0.96);
+}
+
 .play-img {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: contain;        /* contain so the full button shape shows */
-  filter: drop-shadow(0 4px 22px rgba(249,216,110,0.5))
-          drop-shadow(0 0 12px rgba(176,127,255,0.35));
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain;
+
+  filter:
+    drop-shadow(0 6px 24px rgba(249,216,110,0.45))
+    drop-shadow(0 0 18px rgba(176,127,255,0.35));
+
+  z-index: 2;
 }
 
-/* play-text removed — text is part of the button asset image */
 .ripple {
   position: absolute; width: 10px; height: 10px;
   background: rgba(255,255,255,0.35); border-radius: 50%;
