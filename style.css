@@ -1,4 +1,4 @@
-/* v15 */
+/* v16 */
 /* ============================================================
    FANTASY QUEST — Mobile Main Screen (layout-fixed)
    No scroll · Hero on platform · All UI visible
@@ -39,6 +39,7 @@ html, body {
 .bg-img {
   width: 100%; height: 100%;
   object-fit: cover; object-position: center top;
+  filter: blur(1.5px) brightness(0.72) saturate(1.1);
 }
 .bg-overlay {
   position: absolute; inset: 0;
@@ -98,7 +99,7 @@ html, body {
   flex-shrink: 0;
 }
 .logo {
-  width: clamp(150px, 65%, 230px); height: auto;
+  width: 42%; height: auto;
   object-fit: contain;
   filter: drop-shadow(0 0 18px rgba(249,216,110,0.55)) drop-shadow(0 2px 8px rgba(0,0,0,0.7));
   animation: logoFloat 5s ease-in-out infinite;
@@ -109,7 +110,7 @@ html, body {
 }
 
 /* ══════════════════════════════════════════════
-   HERO STAGE
+   HERO STAGE — 44% of screen height
 ══════════════════════════════════════════════ */
 .hero-stage {
   position: relative;
@@ -119,33 +120,34 @@ html, body {
   overflow: hidden;
 }
 
-/* AURA — z:2, behind hero and platform */
+/* AURA — width: hero(34% of 390=132px) × 1.55 = 204px, bottom: 40% of stage */
 .aura-wrap {
   position: absolute;
-  bottom: 18%;
+  bottom: 34%;
   left: 50%;
   transform: translateX(-50%);
-  width: 240px;
+  width: 204px;
   z-index: 2;
   pointer-events: none;
 }
 .hero-aura {
   width: 100%; height: auto; display: block;
   filter: blur(1px);
+  opacity: 0.55;
   animation: auraBreath 3s ease-in-out infinite;
 }
 @keyframes auraBreath {
-  0%,100% { opacity: 0.7; transform: scale(1); }
-  50%     { opacity: 1;   transform: scale(1.08); }
+  0%,100% { opacity: 0.45; transform: scale(1); }
+  50%     { opacity: 0.65; transform: scale(1.08); }
 }
 
-/* PARTICLE GLOW — z:3 */
+/* PARTICLE GLOW */
 .glow-wrap {
   position: absolute;
-  bottom: 20%;
+  bottom: 36%;
   left: 50%;
   transform: translateX(-50%);
-  width: 200px;
+  width: 170px;
   z-index: 3;
   pointer-events: none;
 }
@@ -159,47 +161,42 @@ html, body {
   to   { transform: rotate(360deg); }
 }
 
-/* PLATFORM — z:4, sits at stage bottom */
+/* PLATFORM — hero(132px) × 1.45 = 191px wide, bottom: 34% of stage */
 .platform-wrap {
   position: absolute;
-  bottom: 0;
+  bottom: 34%;
   left: 50%;
   transform: translateX(-50%);
-  width: 240px;
+  width: 191px;
   z-index: 4;
 }
 .hero-platform {
   width: 100%; height: auto; display: block;
   filter:
-    drop-shadow(0 12px 40px rgba(90,30,180,0.6))
-    drop-shadow(0 4px 16px rgba(0,0,0,0.8));
+    drop-shadow(0 8px 30px rgba(90,30,180,0.7))
+    drop-shadow(0 4px 12px rgba(0,0,0,0.9));
 }
 
-/* CHARACTER — z:5, positioned above platform
-   bottom = platform rendered height * ~0.6
-   Platform 240px wide, asset ratio ~0.45 → height ~108px
-   Hero sits at bottom: 65px (inside top surface of platform) */
-.hero-group {
-  display: contents; /* no wrapper effect, children position independently */
-}
+/* CHARACTER — 34% of screen width = 133px, bottom: 42% of stage */
+.hero-group { display: contents; }
 .character-wrap {
   position: absolute;
-  bottom: 65px;
+  bottom: 42%;
   left: 50%;
   transform: translateX(-50%);
-  width: 172px;
+  width: 133px;
   z-index: 5;
   animation: heroFloat 4s ease-in-out infinite;
 }
 @keyframes heroFloat {
   0%,100% { transform: translateX(-50%) translateY(0); }
-  50%     { transform: translateX(-50%) translateY(-8px); }
+  50%     { transform: translateX(-50%) translateY(-7px); }
 }
 .character {
   width: 100%; height: auto; display: block;
   filter:
-    drop-shadow(0 0 22px rgba(176,127,255,0.6))
-    drop-shadow(0 8px 24px rgba(0,0,0,0.85));
+    drop-shadow(0 0 20px rgba(176,127,255,0.65))
+    drop-shadow(0 6px 20px rgba(0,0,0,0.9));
 }
 
 /* ══════════════════════════════════════════════
@@ -222,14 +219,14 @@ html, body {
 }
 
 /* ── XP BAR ── */
-.xp-section { width: 100%; }
+.xp-section { width: 78%; }
 
 /* Drop the frame image — it was too thin and unreadable.
    Build a custom bar that looks premium and shows text clearly. */
 .xp-bar-container {
   position: relative;
   width: 100%;
-  height: 52px;
+  height: 54px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -321,8 +318,8 @@ html, body {
 
 /* unified sizing system */
 .play-wrap {
-  --play-width: 200px;
-  --play-height: 80px;
+  --play-width: 164px;
+  --play-height: 72px;
 }
 
 .play-glow-ring {
