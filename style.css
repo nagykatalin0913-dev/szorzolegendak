@@ -1,4 +1,4 @@
-/* v6 */
+/* v7 */
 /* ============================================================
    FANTASY QUEST — Mobile Main Screen (layout-fixed)
    No scroll · Hero on platform · All UI visible
@@ -319,7 +319,7 @@ html, body {
 }
 .play-glow-ring {
   position: absolute;
-  width: 230px; height: 78px; border-radius: 40px;
+  width: 200px; height: 68px; border-radius: 34px;
   box-shadow:
     0 0 30px rgba(249,216,110,0.35),
     0 0 60px rgba(176,127,255,0.2);
@@ -334,7 +334,7 @@ html, body {
   position: relative;
   display: flex; align-items: center; justify-content: center;
   /* wide enough to show the full asset */
-  width: 280px; height: 88px;
+  width: 300px; height: 94px;
   background: none; border: none; cursor: pointer;
   border-radius: 0;          /* let asset define shape */
   overflow: visible;          /* don't clip the asset */
